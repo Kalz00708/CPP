@@ -1,5 +1,10 @@
 generate:
 	$(CXX) $(CXXFLAGS) -c -o $(OBJPATH)/test.o test.cpp
 
-preprocessor:
-	$(CXX) -E test.cpp -o $(PREPATH)/test.i
+Sources := $(wildcard *.cpp)
+Aims := $(patsubst %.cpp, %, $(Sources))
+
+getPOA:
+	for file in $(Aims) ; do \
+		$(CXX) $(type) $$file.cpp -o $(path)/$$file.$(end) ; \
+	done

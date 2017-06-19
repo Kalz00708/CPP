@@ -1,9 +1,9 @@
 AllDirs := $(shell ls -R | grep '^./src/.*:$$' | awk '{gsub(":","");print}')
 OBJPATH := $(shell pwd)/obj
 PREPATH := $(shell pwd)/pre
+ASSPATH := $(shell pwd)/ass
 # Sources := $(foreach n,$(AllDirs) , $(wildcard $(n)/*.cpp))
-# Objs := $(patsubst %.cpp,%.o, $(Sources))
-	  
+
 CXX = g++-4.9
 CXXFLAGS = -std=c++11 -Wall
 
@@ -21,14 +21,34 @@ allObj:
 	done
 	$(CXX) $(CXXFLAGS) -c -o $(OBJPATH)/main.o main.cpp
 
-export PREPATH
+DontKnowWhyIfNeedFollowAnAssign :=
+ifndef
+	type := -S
+	end := s
+	path := $(ASSPATH)
+else
+	ifeq ($(type),-S)
+		end := s
+		path := $(ASSPATH)
+	else
+		ifeq ($(type),-E)
+			end := i
+			path := $(PREPATH)
+		else
+			type := -S
+			end := s
+			path := $(ASSPATH)
+		endif
+	endif
+endif
+export path end type
 
-preprocessor:
+getPOA:
 	for dir in $(AllDirs) ; do \
-		$(MAKE) preprocessor -C $$dir ; \
+		$(MAKE) getPOA -C $$dir ; \
 	done
-	$(CXX) -E main.cpp -o $(PREPATH)/main.i
+	$(CXX) $(type) main.cpp -o $(path)/main.$(end)
 
 .PHONY : clean  
 clean:   
-	rm -f $(wildcard obj/*.o) main $(wildcard pre/*.i)
+	rm -f $(wildcard obj/*.o) main $(wildcard pre/*.i) $(wildcard ass/*.s)
