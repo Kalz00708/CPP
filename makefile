@@ -1,9 +1,10 @@
-AllDirs := $(shell ls -R | grep '^./.*:$$' | awk '{gsub(":","");print}')
+AllDirs := $(shell ls -R | grep '^./src/.*:$$' | awk '{gsub(":","");print}')
 OBJPATH := $(shell pwd)/obj
+PREPATH := $(shell pwd)/pre
 # Sources := $(foreach n,$(AllDirs) , $(wildcard $(n)/*.cpp))
 # Objs := $(patsubst %.cpp,%.o, $(Sources))
 	  
-CXX = g++
+CXX = g++-4.9
 CXXFLAGS = -std=c++11 -Wall
 
 export OBJPATH CXX CXXFLAGS
@@ -20,14 +21,14 @@ allObj:
 	done
 	$(CXX) $(CXXFLAGS) -c -o $(OBJPATH)/main.o main.cpp
 
-$(AllDirs):
-	@echo get here
-	@echo $@
-	$(MAKE) -C $@
+export PREPATH
 
-print:
-	@echo $(AllDirs)
+preprocessor:
+	for dir in $(AllDirs) ; do \
+		$(MAKE) preprocessor -C $$dir ; \
+	done
+	$(CXX) -E main.cpp -o $(PREPATH)/main.i
 
 .PHONY : clean  
 clean:   
-	rm -f $(wildcard obj/*.o) main
+	rm -f $(wildcard obj/*.o) main $(wildcard pre/*.i)
