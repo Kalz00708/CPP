@@ -22,7 +22,7 @@ allObj:
 	$(CXX) $(CXXFLAGS) -c -o $(OBJPATH)/main.o main.cpp
 
 DontKnowWhyIfNeedFollowAnAssign :=
-ifndef
+ifndef type
 	type := -S
 	end := s
 	path := $(ASSPATH)
