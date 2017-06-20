@@ -2,7 +2,7 @@ AllDirs := $(shell ls -R | grep '^./src/.*:$$' | awk '{gsub(":","");print}')
 OBJPATH := $(shell pwd)/obj
 PREPATH := $(shell pwd)/pre
 ASSPATH := $(shell pwd)/ass
-# Sources := $(foreach n,$(AllDirs) , $(wildcard $(n)/*.cpp))
+Sources := $(foreach n,$(AllDirs) , $(wildcard $(n)/*.cpp))
 
 CXX = g++-4.9
 CXXFLAGS = -std=c++11 -Wall
@@ -44,11 +44,16 @@ endif
 export path end type
 
 getPOA:
-	for dir in $(AllDirs) ; do \
-		$(MAKE) getPOA -C $$dir ; \
+	for file in $(Sources) ; do \
+		filename=$$file ; \
+		filename=$${filename#./src} ; \
+		filedir=$${filename%/*} ; \
+		filename=$${filename%.cpp} ; \
+		mkdir -p $(path)$$(echo $${filedir}) ; \
+		$(CXX) $(type) $$file -o $(path)$$(echo $${filename}).$(end) ; \
 	done
 	$(CXX) $(type) main.cpp -o $(path)/main.$(end)
 
 .PHONY : clean  
 clean:   
-	rm -f $(wildcard obj/*.o) main $(wildcard pre/*.i) $(wildcard ass/*.s)
+	rm -R -f $(wildcard obj/*.o) main $(wildcard pre/*) $(wildcard ass/*)
